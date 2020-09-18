@@ -17,10 +17,8 @@ public class Practice1 {
     LocalDate thisYearLaborDay = LocalDate.of(thisYear, 5, 1);
     if (date.isAfter(thisYearLaborDay)) {
       LocalDate nextLaborDay = LocalDate.of(thisYear + 1, 5, 1);
-      long period = nextLaborDay.toEpochDay() - date.toEpochDay();
-      return period;
+      return nextLaborDay.toEpochDay() - date.toEpochDay();
     }
-   long period = Period.between(date, thisYearLaborDay).getDays();
-    return period;
+    return Period.between(date, thisYearLaborDay).getDays();
   }
 }

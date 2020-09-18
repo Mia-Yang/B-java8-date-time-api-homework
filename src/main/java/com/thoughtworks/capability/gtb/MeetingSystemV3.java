@@ -2,6 +2,7 @@ package com.thoughtworks.capability.gtb;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * 脑洞会议系统v3.0
@@ -24,29 +25,29 @@ public class MeetingSystemV3 {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     // 从字符串解析得到会议时间
     LocalDateTime meetingTime = LocalDateTime.parse(timeStr, formatter);
+    Instant meetingTimeStamp = meetingTime.toInstant(ZoneOffset.UTC);
 
-    LocalDateTime now = LocalDateTime.now();
-    if (isAfter(meetingTime)) {
-      LocalDateTime tomorrow = now.plusDays(1);
+    Instant now = Instant.now() ;
+
+
+    if (now.isAfter(meetingTimeStamp)) {
+      // 时间戳转换
+      LocalDateTime chicagoMeetingTime = LocalDateTime.ofInstant(meetingTimeStamp, ZoneId.of("America/Chicago"));
+      LocalDateTime chicagoNow = LocalDateTime.ofInstant(now, ZoneId.of("America/Chicago"));
+      System.out.println(chicagoMeetingTime);
+      System.out.println(chicagoNow);
+
+      Period period = Period.ofDays(1);
+      LocalDateTime tomorrow = chicagoNow.plusDays(period.getDays());
       int newDayOfYear = tomorrow.getDayOfYear();
-      meetingTime = meetingTime.withDayOfYear(newDayOfYear);
-
-      ZonedDateTime londonMeetingTime = ZonedDateTime.of(meetingTime, ZoneId.of("Europe/London"));
-      ZonedDateTime chicagoMeetingTime = londonMeetingTime.withZoneSameInstant(ZoneId.of("America/Chicago"));
-
-      LocalDateTime chicagoLocal = chicagoMeetingTime.toLocalDateTime();
+      chicagoMeetingTime = chicagoMeetingTime.withDayOfYear(newDayOfYear);
 
       // 格式化新会议时间
-      String showTimeStr = formatter.format(chicagoLocal);
+      String showTimeStr = formatter.format(chicagoMeetingTime);
       System.out.println(showTimeStr);
     } else {
       System.out.println("会议还没开始呢");
     }
   }
 
-  public static boolean isAfter(LocalDateTime meetingTime) {
-    LocalDate now = LocalDate.now();
-    int days =  Period.between(now, meetingTime.toLocalDate()).getDays();
-    return days < 0;
-  }
 }
